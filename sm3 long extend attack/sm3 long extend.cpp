@@ -91,8 +91,9 @@ string CF(string V, string Bi)
 }
 
 
-string SM3Encrypt(string m)
+string SM3Encrypt(string m,string secret="")
 {
+    m = secret + m;
     unsigned long long size = (unsigned long long)m.size() * (unsigned long long)4;
     unsigned long long last_lengh = size % 512;
     int Padding_lengh = PadMessage(m, last_lengh < 448 ? 448 - last_lengh : 960 - last_lengh, size);
@@ -107,17 +108,17 @@ string SM3Encrypt(string m)
     }
     return V[block_num];
 }
-string SM3LongExtend(string m_1, string m_2)
+
+string SM3LongExtend(string H_m,string m_1, string m_2, unsigned long long secret_size=0)
 {
-    string H_m = SM3Encrypt(m_1);
-    unsigned long long size = (unsigned long long)m_1.size() * (unsigned long long)4;
+    unsigned long long size = (unsigned long long)m_1.size() * (unsigned long long)4+secret_size;
     unsigned long long last_lengh = size % 512;
     int Padding_lengh = PadMessage(m_1, last_lengh < 448 ? 448 - last_lengh : 960 - last_lengh, size);
     string temp = m_1 + m_2;
-    string H_real = SM3Encrypt(temp);
-    unsigned long long size_temp = (unsigned long long)temp.size() * (unsigned long long)4;
+    
+    unsigned long long size_temp = (unsigned long long)temp.size() * (unsigned long long)4+secret_size;
     unsigned long long last_lengh_temp = size_temp % 512;
-    int Padding_lengh_t = PadMessage(m_2, last_lengh_temp < 448 ? 448 - last_lengh : 960 - last_lengh, size_temp);
+    int Padding_lengh_t = PadMessage(m_2, last_lengh_temp < 448 ? 448 - last_lengh_temp : 960 - last_lengh_temp, size_temp);
     unsigned long long size_attack = (unsigned long long)m_2.size() * (unsigned long long)4;
     unsigned long long block_num = (size_attack) / 512;
     string* B = new string[block_num];
@@ -128,16 +129,45 @@ string SM3LongExtend(string m_1, string m_2)
         MessageExtend(B[i]);
         V[i + 1] = CF(V[i], B[i]);
     }
-    if (V[block_num] == H_real)
-    {
-        cout<<1;
-    }
     return V[block_num];
+}
+
+
+
+unsigned long long Find_Secret_size(string H_m,string m_1,string m_2,string secret) //此处传入 secret 是为了模拟实际中对于服务器或者预言机的问询，并非直接的使用。
+{
+    for (int i = 0; i < 17; i+=4)
+    {
+        string m_1_copy = m_1;
+        string m_2_copy = m_2;
+        unsigned long long size = (unsigned long long)m_1_copy.size() * (unsigned long long)4 + i;
+        unsigned long long last_lengh = size % 512;
+        int Padding_lengh = PadMessage(m_1_copy, last_lengh < 448 ? 448 - last_lengh : 960 - last_lengh, size);
+        string temp = m_1_copy + m_2_copy;
+        if (SM3LongExtend(H_m, m_1, m_2, i) == SM3Encrypt(temp, secret))
+        {
+            cout << i;
+            return i;
+        }
+    }
 }
 
 int main()
 {
     string m_1 = "7380164914B2B9172442D7DA8A0600A96F30BC163138AAE38DEE4DB0E4E";
     string m_2 = "7380166F14B2B9172442D7DA8A0600A96F30BC163138AAE3E4DB0FB0E4E";
-    SM3LongExtend(m_1, m_2);
+    string m_1_copy = m_1;
+    string m_2_copy = m_2;
+    string secret = "345";
+    string H_m = SM3Encrypt(m_1, secret);
+    unsigned long long Secret_size=Find_Secret_size(H_m, m_1, m_2, secret);
+    unsigned long long real_size = (unsigned long long)secret.size() * (unsigned long long)4;    
+    cout << (Secret_size == real_size);
+    string H_attack = SM3LongExtend(H_m, m_1, m_2, Secret_size);
+    unsigned long long size = (unsigned long long)m_1.size() * (unsigned long long)4 + real_size;
+    unsigned long long last_lengh = size % 512;
+    int Padding_lengh = PadMessage(m_1, last_lengh < 448 ? 448 - last_lengh : 960 - last_lengh, size);
+    string temp = m_1 + m_2;
+    string H_real = SM3Encrypt(temp, secret);
+    cout << (H_attack == H_real);
 }
