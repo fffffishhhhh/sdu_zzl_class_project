@@ -1,5 +1,3 @@
-import gmpy2
-
 import ECDSA
 from ECDSA import CurveOverFp, Point, generate_keypair, mult_inv
 import random
@@ -12,7 +10,7 @@ n = C.order(G)
 a = 1
 b = 7
 p = 729787
-k = random.randint(1, n)
+k = 369788
 
 
 def sign(m, pri_key=d1):  # d is pri_key
@@ -40,12 +38,6 @@ def verify(m, r, s, P):
         return 0
 
 
-def forge(G, P, u, v):
-    R = C.add(C.mult(G, u), C.mult(P, v))
-    _r = R.x
-    _s = _r * mult_inv(v, n) % n
-
-
 def weak_verify(e, r, s, P):
     w = mult_inv(s, n) % n
     # ver = e*w*G+r*w*P
@@ -63,6 +55,8 @@ def func(sign, msg, pk, msg_c, sign_c):
     r = sign[0]
     for j in range(1000000):  # 遍历j
         r = (r + n) % p
+        if r==0
+            continue
         s = sign[1]
         r_inverse = mult_inv(r, n)  # 求r^-1
         z = ECDSA.hash_and_truncate(msg, n)  # 消息hash
@@ -88,13 +82,6 @@ def func(sign, msg, pk, msg_c, sign_c):
             return Qs[1]
 
 
-def forge(G, P, u, v):
-    R = C.add(C.mult(G, u), C.mult(P, v))
-    _r = R.x
-    _s = _r * mult_inv(v, n) % n
-    _e = u * _s % n
-    return _r, _s, _e
-
 
 def main():
     m = "12345"
@@ -102,8 +89,6 @@ def main():
     m_c = "123456"
     sig_c = sign(m_c)
     extend_pk=func(sig, m, P, m_c, sig_c)
-    r, s, e = forge(G, extend_pk, 1, 1)
-    weak_verify(e, r, s, P)
 
 
 if __name__ == '__main__':

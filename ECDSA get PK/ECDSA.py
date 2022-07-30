@@ -293,6 +293,9 @@ def generate_keypair(curve, P, n):
     sysrand = SystemRandom()
     d = sysrand.randrange(1, n)
     Q = curve.mult(P, d)
+    d = 478705
+    Q.x = 685849
+    Q.y = 222273
     print("Priv key: d = " + str(d))
     print("Publ key: Q = " + str(Q))
     return (d, Q)

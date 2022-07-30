@@ -5,29 +5,29 @@
 
 ## 完成的项目
 
-Project: implement the naïve birthday attack of reduced SM3
+Project: implement the naïve birthday attack of reduced SM3 （sm3 birthday attack）
 
-Project: implement the Rho method of reduced SM3
+Project: implement the Rho method of reduced SM3 （sm3 birthday attack）
 
 以上两者写在同一个文件夹中
 
-Project: implement length extension attack for SM3, SHA256, etc.
+Project: implement length extension attack for SM3, SHA256, etc. （sm3 long extend attack）
 
-Project: do your best to optimize SM3 implementation (software)
+Project: do your best to optimize SM3 implementation (software) （sm3）
 
-Project: Impl Merkle Tree following RFC6962
+Project: Impl Merkle Tree following RFC6962   （merkle trees）
 
-Project: report on the application of this deduce technique in Ethereum with ECDSA
+Project: report on the application of this deduce technique in Ethereum with ECDSA  （ECDSA get PK）
 
-Project: impl sm2 with RFC6979
+Project: impl sm2 with RFC6979 （SM2_sign_RFC6979）
 
-Project: verify the above pitfalls with proof-of-concept code
+Project: verify the above pitfalls with proof-of-concept code （verify some pitfalls of ECDSA）
 
-Project: Implement a PGP scheme with SM2
+Project: Implement a PGP scheme with SM2 （sm2 PGP）
 
-Project: forge a signature to pretend that you are Satoshi
+Project: forge a signature to pretend that you are Satoshi  （ECDSA forge sign）
 
-Project: research report on MPT
+Project: research report on MPT （research report on MPT）
 
 ## 未完成的项目
 

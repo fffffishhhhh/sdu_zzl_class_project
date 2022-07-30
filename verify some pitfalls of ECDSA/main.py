@@ -48,7 +48,7 @@ def weak_verify(e, r, s, P):
 
 
 # 01 leak k
-def test_leaking_k(m, r, s):
+def leaking_k(m, r, s):
     e = ECDSA.hash(m)
     d = mult_inv(r, n) * (k * s - e) % n
     print("泄露k后 , d 为 :", d)
@@ -56,7 +56,7 @@ def test_leaking_k(m, r, s):
 
 
 # 02 reuse k
-def test_reusing_k(m1, m2):
+def reusing_k(m1, m2):
     r1, s1 = sign(m1)
     r1, s2 = sign(m2)
     e1 = ECDSA.hash(m1)
@@ -67,7 +67,7 @@ def test_reusing_k(m1, m2):
 
 
 # 03 reuse different k by different users
-def test_reusing_k_users(m1, m2):
+def reusing_k_users(m1, m2):
     r, s1 = sign(m1, d1)
     r, s2 = sign(m2, d2)
     e1 = ECDSA.hash(m1)
@@ -80,7 +80,7 @@ def test_reusing_k_users(m1, m2):
 
 
 # 05 Verify & Forge a signature of Satoshi
-def test_verify_and_forge(m1):
+def verify_and_forge(m1):
     r, s1 = sign(m1, d1)
 
     u = random.randint(1, n)
@@ -104,7 +104,7 @@ def schnorr(m, priv_key):
     return R, e2, s2
 
 
-def test_schnorr_EDCSA(m, priv_key):
+def schnorr_EDCSA(m, priv_key):
     R, e2, s2 = schnorr(m, priv_key)
     r1, s1 = sign(m, d1)
     e1 = ECDSA.hash(m)
@@ -121,31 +121,31 @@ def main():
     m2 = "askjdhajskfajkf12312432463643242342"
     r, s = sign(m1, d1)
     r, s2 = sign(m2, d1)
-    verify(m,r,s,P)
-
+    # verify(m,r,s,P)
+    print(1)
     # 01 leak k
     print("d is :",d1)
-    test_leaking_k(m1,r,s)
-
+    leaking_k(m1,r,s)
+    print(2)
     # 02 reuse k
     print("d is :",d1)
-    test_reusing_k(m1,m2)
-
+    reusing_k(m1,m2)
+    print(3)
     # 03 reuse different k by different users
-    test_reusing_k_users(m1,m2)
-
+    reusing_k_users(m1,m2)
+    print(4)
     # 04 Malleability of ECDSA
     print("Verify (r,s):")
     verify(m1, r, s, P)
     print("Verify (r,-s):")
     _s_ = -s % n
     verify(m1, r, _s_, P)
-
+    print(5)
     # 05 Verify & Forge a signature of Satoshi
-    test_verify_and_forge(m1)
-
+    verify_and_forge(m1)
+    print(6)
     # 06 schnorr and ECDSA
-    test_schnorr_EDCSA(m1, d1)
+    schnorr_EDCSA(m1, d1)
 
 
 if __name__ == '__main__':

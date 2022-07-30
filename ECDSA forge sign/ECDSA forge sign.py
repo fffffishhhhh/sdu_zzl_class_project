@@ -12,7 +12,7 @@ n = C.order(G)
 a = 1
 b = 7
 p = 729787
-k = random.randint(1, n)
+k = 369788
 
 
 def sign(m, pri_key=d1):  # d is pri_key
@@ -63,6 +63,8 @@ def func(sign, msg, pk, msg_c, sign_c):
     r = sign[0]
     for j in range(1000000):  # 遍历j
         r = (r + n) % p
+        if r==0:
+            continue
         s = sign[1]
         r_inverse = mult_inv(r, n)  # 求r^-1
         z = ECDSA.hash_and_truncate(msg, n)  # 消息hash
